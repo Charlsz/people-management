@@ -16,14 +16,21 @@ Sistema CRUD completo para gestión de datos personales con consulta por lenguaj
 
 ## Inicio Rápido
 
-### 1. Clonar y configurar variables
+### 1. Clonar el repositorio
 
 ```bash
-cp .env
-# Editar .env con las credenciales necesarias
+git clone https://github.com/Charlsz/people-management.git
+cd people-management
 ```
 
-### 2. Desarrollo local (sin Docker)
+### 2. Configurar variables de entorno
+
+```bash
+cp .env.example .env
+# Abrir .env y completar con las credenciales de Supabase y n8n
+```
+
+### 3. Desarrollo local (sin Docker)
 
 ```bash
 npm install
@@ -32,7 +39,7 @@ npx prisma db push
 npm run dev
 ```
 
-### 3. Con Docker Compose
+### 4. Con Docker Compose
 
 ```bash
 docker compose up -d
@@ -40,9 +47,9 @@ docker compose up -d
 
 Acceder a:
 - **App**: http://localhost:3000
-- **n8n**: http://localhost:5678 (admin/admin)
+- **n8n**: http://localhost:5678 (usuario: `admin` / contraseña: `admin`)
 
-### 4. Escalar servicio consultar
+### 5. Escalar servicio consultar
 
 ```bash
 docker compose up -d --scale consultar=2
@@ -96,11 +103,20 @@ Toda transacción (CREATE, READ, UPDATE, DELETE) queda registrada en la tabla `l
 El código base en `main` contiene el esqueleto funcional completo (CRUD básico, validaciones Zod, API routes, Docker, estructura). Cada integrante trabaja en su rama e implementa las mejoras asignadas. Al finalizar, cada uno hace **Pull Request a `main`** y se acepta tras revisión.
 
 ```
-main (esqueleto funcional)
- ├── Frontend / UX
- ├── API / Backend / Auth
- ├── Docker / DevOps / CI-CD
- └── n8n / RAG / Consulta Natural
+master  ← rama principal (esqueleto funcional, NO tocar directamente)
+ ├── feature/frontend-ux     → Carlos  (UI/UX)
+ ├── feature/backend-api     → Daniel  (API + Auth)
+ ├── feature/devops-docker   → Marcus  (Docker + CI/CD)
+ └── feature/rag-n8n         → Maria   (n8n + RAG)
+```
+
+Cada integrante trabaja **solo en su rama**. Para empezar:
+
+```bash
+# Clonar y pararse en la rama asignada (ejemplo para Carlos)
+git clone https://github.com/Charlsz/people-management.git
+cd people-management
+git checkout feature/frontend-ux
 ```
 
 ---
@@ -218,4 +234,4 @@ main (esqueleto funcional)
 4. Otro integrante revisa el PR (code review)
 5. Resolver conflictos si los hay (especialmente en archivos compartidos como `route.ts`)
 6. Merge a `main` cuando el PR esté aprobado
-7. Orden recomendado de merge: (auth) →  (frontend) →  (docker) →  (n8n)
+7. Orden recomendado de merge: `feature/backend-api` → `feature/frontend-ux` → `feature/devops-docker` → `feature/rag-n8n`
