@@ -104,10 +104,10 @@ El código base en `main` contiene el esqueleto funcional completo (CRUD básico
 
 ```
 master  ← rama principal (esqueleto funcional, NO tocar directamente)
- ├── feature/frontend-ux     → Carlos  (UI/UX)
- ├── feature/backend-api     → Daniel  (API + Auth)
- ├── feature/devops-docker   → Marcus  (Docker + CI/CD)
- └── feature/rag-n8n         → Maria   (n8n + RAG)
+ ├── feature/frontend-ux     →   (UI/UX)
+ ├── feature/backend-api     →   (API + Auth)
+ ├── feature/devops-docker   →   (Docker + CI/CD)
+ └── feature/rag-n8n         →   (n8n + RAG)
 ```
 
 Cada integrante trabaja **solo en su rama**. Para empezar:
