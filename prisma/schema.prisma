@@ -7,7 +7,7 @@ datasource db {
 }
 
 model Persona {
-  tipo_documento   String   @db.VarChar(10)
+  tipo_documento   String   @db.VarChar(30)
   nro_documento    String   @id @db.VarChar(10)
   primer_nombre    String   @db.VarChar(30)
   segundo_nombre   String?  @db.VarChar(30)
