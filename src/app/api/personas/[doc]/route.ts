@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { personaSchema } from "@/lib/validators";
+import { parseBirthDate, personaSchema, validateAndDecodePhoto } from "@/lib/validators";
 import { createServerClient } from "@/lib/supabase";
 
 // GET - Consultar persona por documento
@@ -72,16 +72,34 @@ export async function PUT(
       );
     }
 
+    const fechaNacimiento = parseBirthDate(data.fecha_nacimiento);
+    if (!fechaNacimiento) {
+      return NextResponse.json(
+        { success: false, error: "La fecha de nacimiento es inválida" },
+        { status: 400 }
+      );
+    }
+
     // Handle photo upload if provided
     let foto_url = existing.foto_url;
     if (body.foto_base64) {
+      const validatedPhoto = validateAndDecodePhoto(body.foto_base64);
+      if (!validatedPhoto.ok) {
+        return NextResponse.json(
+          { success: false, error: validatedPhoto.error },
+          { status: 400 }
+        );
+      }
+
       const supabaseServer = createServerClient();
-      const buffer = Buffer.from(body.foto_base64, "base64");
-      const fileName = `personas/${doc}-${Date.now()}.jpg`;
+      const fileName = `personas/${doc}-${Date.now()}.${validatedPhoto.extension}`;
 
       const { error: uploadError } = await supabaseServer.storage
         .from("fotos")
-        .upload(fileName, buffer, { contentType: "image/jpeg", upsert: true });
+        .upload(fileName, validatedPhoto.buffer, {
+          contentType: validatedPhoto.contentType,
+          upsert: true,
+        });
 
       if (!uploadError) {
         const { data: urlData } = supabaseServer.storage
@@ -98,7 +116,7 @@ export async function PUT(
         primer_nombre: data.primer_nombre,
         segundo_nombre: data.segundo_nombre || null,
         apellidos: data.apellidos,
-        fecha_nacimiento: new Date(data.fecha_nacimiento),
+        fecha_nacimiento: fechaNacimiento,
         genero: data.genero,
         email: data.email,
         celular: data.celular,

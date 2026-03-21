@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 
 -- Personas table
 CREATE TABLE IF NOT EXISTS personas (
-  tipo_documento VARCHAR(10) NOT NULL,
+  tipo_documento VARCHAR(30) NOT NULL,
   nro_documento  VARCHAR(10) PRIMARY KEY,
   primer_nombre  VARCHAR(30) NOT NULL,
   segundo_nombre VARCHAR(30),
