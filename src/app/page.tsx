@@ -1,73 +1,71 @@
-import Link from "next/link";
+// app/page.tsx
+'use client';
 
-const menuItems = [
-  {
-    href: "/personas/crear",
-    title: "Crear Persona",
-    description: "Registrar una nueva persona en el sistema",
-    icon: "➕",
-  },
-  {
-    href: "/personas/modificar",
-    title: "Modificar Persona",
-    description: "Actualizar datos de una persona existente",
-    icon: "✏️",
-  },
-  {
-    href: "/personas/consultar",
-    title: "Consultar Persona",
-    description: "Buscar y ver datos de personas registradas",
-    icon: "🔍",
-  },
-  {
-    href: "/personas/borrar",
-    title: "Borrar Persona",
-    description: "Eliminar registro de una persona",
-    icon: "🗑️",
-  },
-  {
-    href: "/consultar-natural",
-    title: "Consulta Natural (n8n)",
-    description: "Consulta con lenguaje natural vía RAG/n8n",
-    icon: "🤖",
-  },
-  {
-    href: "/logs",
-    title: "Logs del Sistema",
-    description: "Ver historial de transacciones del sistema",
-    icon: "📋",
-  },
-];
+import { useFormStatus } from 'react-dom';
+import { loginAction } from '@/Auth/Auth.';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function Home() {
+function LoginForm() {
+  const router = useRouter();
+  const { pending } = useFormStatus();
+  const [error, setError] = useState<string | null>(null);
+  
+
+  async function handleSubmit(formData: FormData) {
+    const result = await loginAction(formData);
+    
+    if (result.error) {
+      setError(result.error);
+    } else {
+      // Login exitoso
+      setError(null);
+      // Redirigir al dashboard
+      router.push('/dashboard/query');
+    }
+  }
+
   return (
-    <div className="flex flex-col items-center gap-8">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">
-          Gestión de Datos Personales
-        </h1>
-        <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
-          Seleccione una opción del menú
-        </p>
-      </div>
+    <form action={handleSubmit} className="space-y-4">
+      <input 
+        type="email" 
+        name="email"
+        placeholder="Email" 
+        className="w-full p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+        required
+      />
+      <input 
+        type="password" 
+        name="password"
+        placeholder="Contraseña" 
+        className="w-full p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+        required
+      />
+      
+      {error && (
+        <div className="p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
+      
+      <button 
+        type="submit"
+        disabled={pending}
+        className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {pending ? 'Ingresando...' : 'Entrar'}
+      </button>
+    </form>
+  );
+}
 
-      <div className="grid w-full max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {menuItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="group flex flex-col items-center gap-3 rounded-xl border border-zinc-200 bg-white p-6 text-center shadow-sm transition-all hover:border-zinc-400 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
-          >
-            <span className="text-4xl">{item.icon}</span>
-            <h2 className="text-lg font-semibold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400">
-              {item.title}
-            </h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              {item.description}
-            </p>
-          </Link>
-        ))}
+export default function LoginPage() {
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-slate-100 font-sans">
+      <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 w-full max-w-sm">
+        <h1 className="text-2xl font-bold mb-6 text-slate-800">Iniciar Sesión</h1>
+        <LoginForm />
       </div>
-    </div>
+    </main>
   );
 }
