@@ -1,22 +1,21 @@
- - Utilizar un sistema de autenticacion como Microsoft Entra, Proyecto Roble o cualquier otro SSO reconocido.
- - La aplicacion debe desplegarse en contenedores.
- - La aplicacion debe tener funcionalidad CRUD (crear, consultar, actualizar y borrar) y registrar todas las transacciones en un log.
- - La llave de busqueda de los registros debe ser el documento.
- - Implementar consulta en lenguaje natural utilizando n8n y aplicando el patron RAG.
- - Capturar los campos: Primer Nombre, Segundo Nombre, Apellidos, Fecha de Nacimiento, Genero, Correo electronico, Celular, Nro. Documento y Tipo de documento.
- - Realizar las validaciones requeridas.
- - Tipo de documento: lista con dos valores (Tarjeta de identidad, Cedula).
- - Nro. Documento: debe ser numerico y no mayor de 10 caracteres.
- - Primer Nombre: no debe ser numerico y no mayor de 30 caracteres.
- - Segundo Nombre: no debe ser numerico y no mayor de 30 caracteres.
- - Apellidos: no debe ser numerico y no mayor de 60 caracteres.
- - Fecha de Nacimiento: se debe poder escoger de un calendario o escribir en formato dd-mmm-yyyy.
- - Genero: lista con cuatro valores (Masculino, femenino, No binario, Prefiero no reportar).
- - Correo electronico: validar formato de correo.
- - Celular: debe ser numerico y de 10 caracteres.
- - Foto: validar que el archivo no supere 2 MB.
- - Cada opcion del menu se debe desarrollar en un microservicio.
- - La opcion de Consultar debe estar en un contenedor independiente al resto de la aplicacion y se debe poder habilitar y deshabilitar segun demanda.
- - La base de datos debe estar en un contenedor independiente al resto de la aplicacion.
- - La opcion de consulta de log debe permitir busqueda por tipo, documento y fecha de transaccion.
- - El menu principal debe incluir: Crear Personas, Modificar Datos Personales, Consultar Datos Personales, Consultar Datos personales en Lenguaje Natural (en la interfaz de n8n), Borrar Personas y Consultar log.
+ - Implementar API CRUD de personas usando nro_documento como llave principal de busqueda.
+ - Implementar POST /api/personas/create para crear persona y devolver errores de validacion claros.
+ - Implementar GET /api/personas/[doc] para consultar persona por documento.
+ - Implementar PUT /api/personas/[doc] para actualizar persona por documento.
+ - Implementar DELETE /api/personas/[doc] para borrar persona por documento.
+ - Registrar en logs cada transaccion CRUD con tipo, documento, fecha y detalle.
+ - Implementar GET /api/logs con filtros por tipo, documento y rango de fecha.
+ - Guardar y exponer todos los campos requeridos del formulario principal.
+ - Validar tipo_documento como lista cerrada con: Tarjeta de identidad, Cedula.
+ - Validar nro_documento como numerico y maximo 10 caracteres.
+ - Validar primer_nombre sin numeros y maximo 30 caracteres.
+ - Validar segundo_nombre sin numeros y maximo 30 caracteres.
+ - Validar apellidos sin numeros y maximo 60 caracteres.
+ - Validar fecha_nacimiento aceptando calendario o formato dd-mmm-yyyy.
+ - Validar genero como lista cerrada con: Masculino, femenino, No binario, Prefiero no reportar.
+ - Validar email con formato de correo correcto.
+ - Validar celular como numerico y exactamente 10 caracteres.
+ - Validar foto para que no supere 2 MB y sea una imagen valida.
+ - Manejar codigos HTTP esperados para exito, validacion, no encontrado y conflicto.
+ - Proteger rutas sensibles con autenticacion SSO definida por el proyecto (Entra/Roble/u otro reconocido).
+ - Dejar datos listos para consulta RAG desde n8n (fuente confiable para retrieval).
