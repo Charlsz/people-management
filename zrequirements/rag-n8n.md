@@ -1,0 +1,22 @@
+ - Utilizar un sistema de autenticacion como Microsoft Entra, Proyecto Roble o cualquier otro SSO reconocido.
+ - La aplicacion debe desplegarse en contenedores.
+ - La aplicacion debe tener funcionalidad CRUD (crear, consultar, actualizar y borrar) y registrar todas las transacciones en un log.
+ - La llave de busqueda de los registros debe ser el documento.
+ - Implementar consulta en lenguaje natural utilizando n8n y aplicando el patron RAG.
+ - Capturar los campos: Primer Nombre, Segundo Nombre, Apellidos, Fecha de Nacimiento, Genero, Correo electronico, Celular, Nro. Documento y Tipo de documento.
+ - Realizar las validaciones requeridas.
+ - Tipo de documento: lista con dos valores (Tarjeta de identidad, Cedula).
+ - Nro. Documento: debe ser numerico y no mayor de 10 caracteres.
+ - Primer Nombre: no debe ser numerico y no mayor de 30 caracteres.
+ - Segundo Nombre: no debe ser numerico y no mayor de 30 caracteres.
+ - Apellidos: no debe ser numerico y no mayor de 60 caracteres.
+ - Fecha de Nacimiento: se debe poder escoger de un calendario o escribir en formato dd-mmm-yyyy.
+ - Genero: lista con cuatro valores (Masculino, femenino, No binario, Prefiero no reportar).
+ - Correo electronico: validar formato de correo.
+ - Celular: debe ser numerico y de 10 caracteres.
+ - Foto: validar que el archivo no supere 2 MB.
+ - Cada opcion del menu se debe desarrollar en un microservicio.
+ - La opcion de Consultar debe estar en un contenedor independiente al resto de la aplicacion y se debe poder habilitar y deshabilitar segun demanda.
+ - La base de datos debe estar en un contenedor independiente al resto de la aplicacion.
+ - La opcion de consulta de log debe permitir busqueda por tipo, documento y fecha de transaccion.
+ - El menu principal debe incluir: Crear Personas, Modificar Datos Personales, Consultar Datos Personales, Consultar Datos personales en Lenguaje Natural (en la interfaz de n8n), Borrar Personas y Consultar log.
