@@ -1,142 +1,70 @@
-# Gestion de Datos Personales
+## Arquitectura final
 
-Aplicacion CRUD de datos personales con trazabilidad de logs, almacenamiento de fotos y consulta en lenguaje natural con RAG.
+- Frontend Next.js
+- Supabase Auth para autenticación con proveedor reconocido
+- Supabase Storage para fotos, guardando URL/path
+- Docker Compose para levantar frontend, microservicios, n8n y Postgres
+- Un contenedor Postgres independiente
+- Microservicio crear
+- Microservicio modificar
+- Microservicio borrar
+- Microservicio consultar, separado y apagable
+- Microservicio log, con filtros por tipo/documento/fecha
+- n8n para lenguaje natural con RAG, registrando pregunta y respuesta en log[^1]
 
-## Quick Start
 
-### Requisitos
+## Por qué
 
-- Node.js 20+
-- npm
-- Credenciales de Supabase
+### Frontend Next.js
 
-### Ejecucion local en menos de 5 minutos
+Permite hacer la interfaz rápido, manejar formularios fácilmente y conectar todo desde un solo frontend sin complicarse demasiado.
+Además, como el proyecto tiene CRUD y varias opciones de menú, Next.js ayuda a organizar pantallas y formularios de manera limpia.
 
-```bash
-npm install
-npx prisma generate
-npx prisma db push
-npm run dev
-```
+### Supabase Auth para autenticación con proveedor reconocido
 
-Aplicacion: http://localhost:3000
+Porque la rúbrica pide usar un sistema de autenticación reconocido, y Supabase Auth deja hacerlo sin montar algo más pesado como un sistema empresarial completo.
+Así se cumple el requisito de autenticación de forma simple.
 
-### Ejecucion con Docker Compose
+### Supabase Storage para fotos, guardando URL/path
 
-```bash
-docker compose up -d
-```
+Porque la foto no hace falta guardarla dentro de PostgreSQL; es más simple subirla a Storage y guardar solo la ruta o URL en la base de datos.
+También te sirve bien para validar que el archivo no supere 2 MB antes de subirlo.
 
-Aplicacion: http://localhost:3000
-n8n: http://localhost:5678
+### Docker Compose para levantar frontend, microservicios, n8n y Postgres
 
-## Features
+Porque la rúbrica pide que la aplicación se despliegue en contenedores, y Docker Compose es la forma más sencilla de levantar varios servicios al mismo tiempo.
+Frontend, tus servicios, n8n y la base de datos corren separados.
 
-- CRUD de personas: crear, consultar, modificar y borrar por numero de documento.
-- Validaciones de backend para campos personales y foto.
-- Registro de transacciones en tabla de logs (CREATE, READ, UPDATE, DELETE).
-- Consulta en lenguaje natural integrada con n8n y patron RAG.
-- Arquitectura lista para contenedores con servicio de app, servicio de consulta y n8n.
+### Un contenedor Postgres independiente
 
-## Configuration
+Porque el enunciado dice explícitamente que la base de datos debe estar en un contenedor independiente al resto de la aplicación.
+Además, usar un solo Postgres te mantiene el proyecto simple.
 
-Variables esperadas en `.env`:
+### Microservicio crear
 
-| Variable | Descripcion | Default |
-|---|---|---|
-| DATABASE_URL | Conexion PostgreSQL/Supabase para Prisma | - |
-| NEXT_PUBLIC_SUPABASE_URL | URL publica de proyecto Supabase | - |
-| NEXT_PUBLIC_SUPABASE_ANON_KEY | Llave anon publica de Supabase | - |
-| SUPABASE_SERVICE_ROLE_KEY | Llave de servicio para operaciones server | - |
-| N8N_WEBHOOK_URL | Webhook para consulta natural/ingesta RAG | - |
-| NODE_ENV | Entorno de ejecucion | development |
+Porque “Crear Personas” aparece como una opción del menú, y la rúbrica dice que cada opción del menú debe desarrollarse en un microservicio.
+Este servicio se encarga de registrar nuevos datos personales y de dejar trazabilidad en el log.
 
-### Campos y reglas de negocio
+### Microservicio modificar
 
-| Campo | Regla |
-|---|---|
-| tipo_documento | Lista: Tarjeta de identidad, Cédula |
-| nro_documento | Numerico, maximo 10 caracteres |
-| primer_nombre | No numerico, maximo 30 caracteres |
-| segundo_nombre | No numerico, maximo 30 caracteres |
-| apellidos | No numerico, maximo 60 caracteres |
-| fecha_nacimiento | Calendario o texto valido en formato dd-mmm-yyyy |
-| genero | Lista: Masculino, femenino, No binario, Prefiero no reportar |
-| email | Formato de correo valido |
-| celular | Numerico, exactamente 10 caracteres |
-| foto | Imagen valida, maximo 2 MB |
+Porque “Modificar Datos Personales” también aparece como una opción del menú y debe vivir como su propio microservicio para cumplir literalmente ese punto.
+Aquí haces las validaciones, actualizas la información y registras la transacción en el log.
 
-## API Reference
+### Microservicio borrar
 
-### POST /api/personas/create
+Porque “Borrar Personas” es otra opción del menú y debe estar separada si quieres cumplir la rúbrica de la forma más segura posible.
+También debe guardar en log quién borró, qué documento se borró y cuándo se hizo.
 
-Crea una persona con validaciones de backend y registra log CREATE.
+### Microservicio consultar, separado y apagable
 
-| Campo | Tipo | Requerido |
-|---|---|---|
-| tipo_documento | string | Si |
-| nro_documento | string | Si |
-| primer_nombre | string | Si |
-| segundo_nombre | string | No |
-| apellidos | string | Si |
-| fecha_nacimiento | string | Si |
-| genero | string | Si |
-| email | string | Si |
-| celular | string | Si |
-| foto_base64 | string | No |
+Porque la rúbrica dice dos cosas muy claras: que “Consultar” debe estar en un contenedor independiente y que se debe poder habilitar y deshabilitar según demanda.
+Por eso este servicio no conviene mezclarlo con los demás; debe poder levantarse o apagarse sin afectar toda la aplicación.
 
-Respuesta:
-- 201: Persona creada
-- 400: Error de validacion
-- 409: Documento ya existe
+### Microservicio log, con filtros por tipo/documento/fecha
 
-### GET /api/personas/[doc]
+Porque no solo se debe registrar transacciones, sino también poder consultarlas por tipo y documento, y por fecha de transacción.
+Este servicio ayuda a cumplir exactamente ese punto sin mezclar la lógica de auditoría con el CRUD principal.
 
-Consulta persona por numero de documento y registra log READ.
+### n8n para lenguaje natural con RAG, registrando pregunta y respuesta en log
 
-Respuesta:
-- 200: Persona encontrada
-- 404: Persona no encontrada
-
-### PUT /api/personas/[doc]
-
-Actualiza datos de persona por documento con validaciones de backend y registra log UPDATE.
-
-Respuesta:
-- 200: Persona actualizada
-- 400: Error de validacion
-- 404: Persona no encontrada
-
-### DELETE /api/personas/[doc]
-
-Elimina persona por documento y registra log DELETE.
-
-Respuesta:
-- 200: Persona eliminada
-- 404: Persona no encontrada
-
-### GET /api/personas/buscar?q=texto
-
-Busca personas por documento, nombre, apellido o email.
-
-### GET /api/logs?tipo=&doc=&desde=&hasta=
-
-Consulta logs por filtros de tipo, documento y fecha.
-
-## Documentation
-
-- [README](README.md)
-- [Prisma Schema](prisma/schema.prisma)
-- [Database Init SQL](db/init.sql)
-
-## Contributing
-
-1. Crear rama desde `main`.
-2. Implementar cambios pequenos y descriptivos.
-3. Ejecutar lint y pruebas locales.
-4. Abrir Pull Request hacia `main`.
-5. Resolver observaciones de revision antes de merge.
-
-## License
-
-Uso academico / interno del equipo del proyecto.
+Porque la rúbrica pide consulta en lenguaje natural usando n8n y aplicando RAG, y además aclara que las preguntas y respuestas también deben quedar registradas en el log.
