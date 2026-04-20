@@ -67,7 +67,7 @@ Los campos requeridos son:
 
 ### 3. Base de datos
 
-<img src="1-documentation/tablasdb.png" alt="tablas">
+![tablas](./tablasdb.png)
 
 La base de datos debe ser simple y estar en un solo contenedor PostgreSQL independiente.  
 No necesitamos varias bases ni tablas extras innecesarias.
