@@ -29,7 +29,7 @@ No hace CRUD de personas; solo sirve para auditoría y consulta de trazabilidad.
 
 ### index.ts: 
 
-### arranca el servidor.
+ arranca el servidor.
 
 ### routes.ts: 
 
