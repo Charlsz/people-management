@@ -82,7 +82,7 @@ La arquitectura del sistema está compuesta por los siguientes elementos:
 
 El frontend centraliza la interacción del usuario con el sistema. Los microservicios manejan la lógica de negocio y el acceso a la base de datos. PostgreSQL almacena la información de personas y el log de transacciones. n8n consulta la base de datos, construye el contexto y coordina la respuesta en lenguaje natural .
 
-### Diagrama sugerido
+### Diagrama
 
 ![arquitectura](./D1-arquitectura.png)
 
@@ -328,7 +328,6 @@ El proyecto está diseñado para un contexto académico, por lo que no busca res
 Las principales limitaciones consideradas son:
 
 - Se utiliza una sola base de datos para simplificar la implementación.
-- La validación del tamaño de la foto depende de la lógica del frontend y backend antes de la carga a Storage.
 - El rendimiento de la consulta en lenguaje natural dependerá de la calidad y consistencia de los datos almacenados.
 - La arquitectura de microservicios se mantiene funcional y simple, sin incorporar componentes adicionales como colas, gateways o múltiples bases de datos.
 
