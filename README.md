@@ -8,7 +8,7 @@ Construir una aplicación que permita registrar, modificar, consultar y eliminar
 
 ## Arquitectura
 
-La solución está organizada con una estructura modular basada en frontend, microservicios, base de datos, flujos de n8n e infraestructura de contenedores.
+La solución utiliza una arquitectura de microservicios con separación por capas funcionales. Cada microservicio maneja su propia lógica de rutas, controladores, servicios y acceso a datos de forma independiente.
 
 ### Componentes principales
 
