@@ -55,7 +55,6 @@ Los datos personales deben cumplir validaciones definidas en frontend y backend 
 ```text
 people-management/
 ├── 1-documentation/
-├── database/
 ├── frontend/
 ├── infra/
 ├── n8n/
@@ -72,11 +71,3 @@ people-management/
 - `infra/`: configuración de Docker Compose y recursos de infraestructura.
 - `n8n/`: flujos de trabajo para consulta en lenguaje natural.
 - `services/`: microservicios del sistema.
-
-## Estado del proyecto
-
-El proyecto se está construyendo con un enfoque incremental, priorizando una arquitectura clara, bajo acoplamiento y cumplimiento de los requerimientos sin agregar complejidad innecesaria.
-
-## Notas
-
-La aplicación está diseñada para mantener una sola base de datos PostgreSQL y una separación clara de responsabilidades entre frontend, servicios, auditoría y consulta en lenguaje natural, con el objetivo de evitar overengineering y conservar una implementación manejable para el alcance académico del proyecto.
