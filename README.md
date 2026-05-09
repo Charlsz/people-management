@@ -66,7 +66,6 @@ people-management/
 ### Descripción de carpetas
 
 - `1-documentation/`: documentación funcional y técnica del proyecto, incluyendo planificación y SQL.
-- `database/`: archivos relacionados con el esquema de base de datos.
 - `frontend/`: aplicación principal en Next.js.
 - `infra/`: configuración de Docker Compose y recursos de infraestructura.
 - `n8n/`: flujos de trabajo para consulta en lenguaje natural.
