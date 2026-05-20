@@ -1,0 +1,144 @@
+services:
+  create-person:
+    build:
+      context: ../services/create-person
+      dockerfile: Dockerfile
+    container_name: create-person
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3001:3001"
+    networks:
+      - people-network
+
+  update-person:
+    build:
+      context: ../services/update-person
+      dockerfile: Dockerfile
+    container_name: update-person
+    restart: unless-stopped
+    environment:
+      PORT: 3002
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3002:3002"
+    networks:
+      - people-network
+
+  delete-person:
+    build:
+      context: ../services/delete-person
+      dockerfile: Dockerfile
+    container_name: delete-person
+    restart: unless-stopped
+    environment:
+      PORT: 3003
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3003:3003"
+    networks:
+      - people-network
+
+  query-person:
+    build:
+      context: ../services/query-person
+      dockerfile: Dockerfile
+    container_name: query-person
+    restart: unless-stopped
+    environment:
+      PORT: 3004
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3004:3004"
+    networks:
+      - people-network
+
+  logs:
+    build:
+      context: ../services/logs
+      dockerfile: Dockerfile
+    container_name: logs
+    restart: unless-stopped
+    environment:
+      PORT: 3005
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3005:3005"
+    networks:
+      - people-network
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: people-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+
+      NEXT_PUBLIC_CREATE_PERSON_API_URL: http://localhost:3001/api
+      NEXT_PUBLIC_UPDATE_PERSON_API_URL: http://localhost:3002/api
+      NEXT_PUBLIC_DELETE_PERSON_API_URL: http://localhost:3003/api
+      NEXT_PUBLIC_QUERY_PERSON_API_URL: http://localhost:3004/api
+      NEXT_PUBLIC_LOGS_API_URL: http://localhost:3005/api
+      NEXT_PUBLIC_N8N_URL: http://localhost:5678
+    ports:
+      - "3000:3000"
+    depends_on:
+      - create-person
+      - update-person
+      - delete-person
+      - query-person
+      - logs
+    networks:
+      - people-network
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: people-n8n
+    restart: unless-stopped
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD}
+      N8N_HOST: localhost
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:5678/
+      GENERIC_TIMEZONE: America/Bogota
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - people-network
+
+volumes:
+  n8n_data:
+
+networks:
+  people-network:
+    driver: bridge
